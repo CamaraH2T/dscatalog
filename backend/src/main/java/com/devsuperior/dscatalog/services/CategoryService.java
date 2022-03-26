@@ -34,4 +34,13 @@ public class CategoryService {
 			
 		return new CategoryDTO(entity);
 	}
+
+	@Transactional(readOnly = true)
+	public CategoryDTO insert(CategoryDTO dto) {
+		// Converter o DTO para um objeto do tipo Category
+		Category entity = new Category();
+		entity.setName(dto.getName());
+		entity = repository.save(entity);
+		return new CategoryDTO(entity);
+	}
 }
