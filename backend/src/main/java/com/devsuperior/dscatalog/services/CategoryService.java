@@ -9,6 +9,9 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +28,10 @@ public class CategoryService {
 	private CategoryRepository repository;
 	
 	@Transactional(readOnly = true)
-	public List<CategoryDTO> findAll(){
-		List<Category> list = repository.findAll();		
-		// Transforma e destransforma para stream
-		return list.stream().map(CategoryDTO::new).collect(Collectors.toList());	
+	public Page<CategoryDTO> findAllPaged(PageRequest pageRequest){
+		Page<Category> list = repository.findAll(pageRequest);
+						
+		return list.map(CategoryDTO::new);	
 	}
 
 	@Transactional(readOnly = true)
@@ -49,12 +52,11 @@ public class CategoryService {
 		return new CategoryDTO(entity);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Transactional(readOnly = true)
 	public CategoryDTO update(Long id, CategoryDTO dto) {
 		try {
-		// 	Instanciar um obj do tipo Category
-			Category entity = repository.getOne(id);
+			// 	Instanciar um obj do tipo Category
+			Category entity = repository.getById(id);
 			entity.setName(dto.getName());
 			entity = repository.save(entity);
 		
