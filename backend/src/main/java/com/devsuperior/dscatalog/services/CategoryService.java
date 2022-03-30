@@ -40,28 +40,25 @@ public class CategoryService {
 		return new CategoryDTO(entity);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public CategoryDTO insert(CategoryDTO dto) {
-		// Converter o DTO para um objeto do tipo Category
 		Category entity = new Category();
 		entity.setName(dto.getName());
 		entity = repository.save(entity);
 		return new CategoryDTO(entity);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public CategoryDTO update(Long id, CategoryDTO dto) {
 		try {
-			// 	Instanciar um obj do tipo Category
-			Category entity = repository.getById(id);
+			Category entity = repository.getOne(id);
 			entity.setName(dto.getName());
 			entity = repository.save(entity);
-		
 			return new CategoryDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
-		}
+		}		
 	}
 
 	// Sem transaction para poder capturar a exceção

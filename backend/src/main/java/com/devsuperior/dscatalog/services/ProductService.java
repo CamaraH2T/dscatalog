@@ -46,33 +46,27 @@ public class ProductService {
 		return new ProductDTO(entity, entity.getCategories());
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public ProductDTO insert(ProductDTO dto) {
-		// Converter o DTO para um objeto do tipo Product
 		Product entity = new Product();
-		
 		copyDtoToEntity(dto, entity);
-		
-		entity.setName(dto.getName());
 		entity = repository.save(entity);
 		return new ProductDTO(entity);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public ProductDTO update(Long id, ProductDTO dto) {
 		try {
-			// 	Instanciar um obj do tipo Product
-			Product entity = repository.getById(id);
-			
+			Product entity = repository.getOne(id);
 			copyDtoToEntity(dto, entity);
 			entity = repository.save(entity);
-		
 			return new ProductDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
-		}
+		}		
 	}
+
 
 	// Sem transaction para poder capturar a exceção
 	public void delete(Long id) {
